@@ -83,11 +83,11 @@ export function RrwebPlayer({ recordingUrl }: RrwebPlayerProps) {
 
     containerRef.current.innerHTML = '';
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     playerRef.current = new rrwebPlayer({
       target: containerRef.current,
       props: {
-        events: eventsRef.current as any,
+        // @ts-expect-error events type mismatch between unknown[] and eventWithTime[]
+        events: eventsRef.current,
         showController: true,
         autoPlay: false,
         width: playerSize.width,
@@ -105,7 +105,9 @@ export function RrwebPlayer({ recordingUrl }: RrwebPlayerProps) {
 
         const response = await fetch(recordingUrl);
         if (!response.ok) {
-          throw new Error(`Failed to fetch recording: ${response.statusText}`);
+          setError(`Failed to fetch recording: ${response.statusText}`);
+          setLoading(false);
+          return;
         }
 
         let data;
