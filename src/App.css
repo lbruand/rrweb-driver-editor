@@ -45,7 +45,7 @@
   display: none !important;
 }
 
-/* Fixed controller at bottom of viewport */
+/* Fixed controller at bottom of viewport - dark and transparent */
 .player-container.show-controls .rr-controller {
   display: flex !important;
   position: fixed !important;
@@ -54,6 +54,8 @@
   right: 0 !important;
   z-index: 1000;
   animation: slideIn 0.3s ease-in-out;
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(3px);
 }
 
 @keyframes slideIn {
@@ -63,4 +65,31 @@
   to {
     transform: translateY(0);
   }
+}
+
+/* Make speed buttons visible - light on dark */
+.player-container .rr-controller button,
+.rr-controller__btns button {
+  color: rgba(255, 255, 255, 0.7) !important;
+  background: transparent !important;
+}
+
+.player-container .rr-controller button:hover,
+.rr-controller__btns button:hover {
+  color: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.player-container .rr-controller button.active,
+.player-container .rr-controller button[disabled],
+.rr-controller__btns button.active {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  font-weight: bold;
+}
+
+/* Ensure all controller text is visible */
+.player-container .rr-controller span,
+.player-container .rr-controller div {
+  color: #fff !important;
 }
