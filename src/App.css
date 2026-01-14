@@ -7,42 +7,38 @@
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
 }
 
-.loading {
+.loading,
+.error,
+.too-small {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
   font-size: 1.2rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.loading {
   color: #666;
 }
 
 .error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  font-size: 1.2rem;
   color: #d32f2f;
 }
 
-.player-container {
-  width: 100%;
-  height: 100%;
+.too-small {
+  color: #ff9800;
 }
 
 .player-container .rr-player {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.player-container .rr-player__frame {
-  width: 100% !important;
-  height: 100% !important;
+  position: relative;
+  overflow: hidden;
 }
 
 /* Slide-in controls when near bottom */
@@ -58,9 +54,4 @@
 
 .player-container.show-controls .rr-controller {
   transform: translateY(0);
-}
-
-.player-container .rr-player {
-  position: relative;
-  overflow: hidden;
 }
