@@ -42,9 +42,7 @@ export function useAnnotations(annotationsUrl: string | undefined): UseAnnotatio
         }
 
         const markdown = await response.text();
-        console.log('Loaded annotation markdown:', markdown.slice(0, 200));
         const parsed = parseAnnotations(markdown);
-        console.log('Parsed annotations:', parsed);
         setData(parsed);
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : 'Unknown error';
