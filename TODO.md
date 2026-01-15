@@ -40,13 +40,13 @@ driverObj.highlight({
        left arrow : Go back to the previous bookmark and pause.
        space : play/pause
  * [x] update the title of the page with the title from the annotations
- * [ ] it would be great to support hashtags in the url to go directly on a bookmark
+ * [x] it would be great to support hashtags in the url to go directly on a bookmark
    ( and modify the url according during replay) 
+ * [x] add some tests for the annotations parsing
  * [ ] the top of the page is not shown on firefox
  * [ ] add a timestamp display that you can copy/paste
  * [ ] github actions : add some linting a builder, etc...
  * [ ] improve a lot the tests so the harness is harder
- * [ ] add some tests for the annotations parsing
  * [ ] We should make a video/annotations that makes more sense
  * [ ] We should have a video of the whole thing to demo in the readme
  * [ ] ask claude to suggest some refactorings.
