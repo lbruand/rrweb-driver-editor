@@ -58,4 +58,7 @@ driverObj.highlight({
        so claude/cursor can modify the json stream directly. The creation of the annotation file should be easy in
        claude/cursor. It means we should be able to read the recording json easily.Maybe we could build a summary.
  * [ ] change the logo
+ * [ ] be able to export a packed version in one single html file (possible ?) that you can run no server needed.
+ * [ ] be able to export a pdf with a screenshot of each bookmark/section on a page.
+ * [ ] to show or not a bookmark in the progressbar and in the table of content.
  
