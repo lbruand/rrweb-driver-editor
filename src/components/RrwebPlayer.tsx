@@ -59,6 +59,13 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
   const [totalDuration, setTotalDuration] = useState(0);
   const [iframeElement, setIframeElement] = useState<HTMLIFrameElement | null>(null);
 
+  // Update page title from annotations
+  useEffect(() => {
+    if (title) {
+      document.title = `rehearseur - ${title}`;
+    }
+  }, [title]);
+
   const calculateSize = useCallback(() => {
     if (!recordingDimensions || !wrapperRef.current) return;
 

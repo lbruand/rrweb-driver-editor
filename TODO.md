@@ -39,8 +39,8 @@ driverObj.highlight({
        right arrow : skip to the next bookmark and pause
        left arrow : Go back to the previous bookmark and pause.
        space : play/pause
+ * [x] update the title of the page with the title from the annotations 
  * [ ] the top of the page is not shown on firefox
- * [ ] update the title of the page with the title from the annotations
  * [ ] add a timestamp display that you can copy/paste
  * [ ] it would be great to support hashtags in the url to go directly on a bookmark
        ( and modify the url according during replay)
