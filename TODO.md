@@ -1,6 +1,6 @@
 
 # TODO
- * [ ] annotations and bookmarks.
+ * [x] annotations and bookmarks.
        I am interested in adding the following functionalites :
        - added an extra markdown file with "annotated" events that I am going to add.
        - the annotated events, will result in a number of things :
