@@ -30,15 +30,26 @@ driverObj.highlight({
   },
 });
 ```
-
+ * [x] add some tests
+ * [ ] improve a lot the tests so the harness is harder
+ * [ ] find a better name
+ * [ ] We should make a video that makes more sense
+ * [ ] cleanup the log for the annotations parsing
+ * [ ] add some key shortcuts
+ * [ ] ask claude to suggest some refactorings.
+ * [ ] make the table of content refoldable
+ * [ ] have a default for autopause to true
+ * [ ] when one clicks on drive.js annotation, the play should start again directly
  * [ ] annotations and bookmarks should be generated using genai. How will the model be able to read the json.
-       we need to package the current project in two parts:
-         - typescript library.
-         - a cursor template project for quickstarts
-       then create a video/demo of how to do that.
+     we need to package the current project in two parts:
+       - typescript library.
+       - a cursor template project for quickstarts
+     then create a video/demo of how to do that.
  * [ ] try again to leverage more claude/cursor by converting the json to toon, 
        adding a semantic database on top of the json/toon recording file etc...
+       so claude/cursor can modify the json stream directly. The creation of the annotation file should be easy in
+       claude/cursor. It means we should be able to read the recording json easily.Maybe we could build a summary.
  * [ ] change the logo
- * [ ] add some key shortcuts
  * [ ] add some linting a builder, github actions etc...
+ * [ ] package the code into 
  
