@@ -1,0 +1,7 @@
+services:
+  firefox:
+    image: selenium/standalone-firefox:latest
+    network_mode: host
+    shm_size: "2gb"
+    environment:
+      - SE_NODE_MAX_SESSIONS=2

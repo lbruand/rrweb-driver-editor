@@ -131,8 +131,10 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
   );
 
   // Poll for current time
+  // Note: iframeElement is set after player creation, so using it as dependency
+  // ensures this effect runs after the player is ready
   useEffect(() => {
-    if (!playerRef.current) return;
+    if (!playerRef.current || !iframeElement) return;
 
     const interval = setInterval(() => {
       const replayer = playerRef.current?.getReplayer?.();
@@ -144,7 +146,7 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
     }, 100);
 
     return () => clearInterval(interval);
-  }, [checkAnnotationTriggers, ready]);
+  }, [checkAnnotationTriggers, iframeElement]);
 
   // Create player when container is ready and we have size
   useEffect(() => {
@@ -156,42 +158,6 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
     }
 
     containerRef.current.innerHTML = '';
-
-    // Set up MutationObserver to catch iframe creation and modify sandbox before content loads
-    let capturedIframe: HTMLIFrameElement | null = null;
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        for (const node of mutation.addedNodes) {
-          if (node instanceof HTMLIFrameElement) {
-            // Immediately modify sandbox attribute before content loads
-            const currentSandbox = node.getAttribute('sandbox') || '';
-            if (!currentSandbox.includes('allow-scripts')) {
-              node.setAttribute(
-                'sandbox',
-                currentSandbox ? `${currentSandbox} allow-scripts` : 'allow-same-origin allow-scripts'
-              );
-            }
-            capturedIframe = node;
-          }
-          // Also check children if a container was added
-          if (node instanceof HTMLElement) {
-            const iframe = node.querySelector('iframe');
-            if (iframe && !capturedIframe) {
-              const currentSandbox = iframe.getAttribute('sandbox') || '';
-              if (!currentSandbox.includes('allow-scripts')) {
-                iframe.setAttribute(
-                  'sandbox',
-                  currentSandbox ? `${currentSandbox} allow-scripts` : 'allow-same-origin allow-scripts'
-                );
-              }
-              capturedIframe = iframe;
-            }
-          }
-        }
-      }
-    });
-
-    observer.observe(containerRef.current, { childList: true, subtree: true });
 
     playerRef.current = new rrwebPlayer({
       target: containerRef.current,
@@ -205,12 +171,14 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
       },
     });
 
-    // Stop observing after player is created
-    observer.disconnect();
-
-    // Get iframe element for driver.js (use captured or get from replayer)
+    // Get iframe element for driver.js
     const replayer = playerRef.current.getReplayer?.();
-    const iframe = capturedIframe || replayer?.iframe;
+    const iframe = replayer?.iframe;
+
+    // Remove sandbox attribute - we trust the recording input
+    if (iframe) {
+      iframe.removeAttribute('sandbox');
+    }
     if (iframe) {
       setIframeElement(iframe);
     }
