@@ -34,7 +34,7 @@ driverObj.highlight({
  * [ ] annotations and bookmarks should be generated using genai. How will the model be able to read the json.
        we need to package the current project in two parts:
          - typescript library.
-         - a cursor template project
+         - a cursor template project for quickstarts
        then create a video/demo of how to do that.
  * [ ] try again to leverage more claude/cursor by converting the json to toon, 
        adding a semantic database on top of the json/toon recording file etc...
