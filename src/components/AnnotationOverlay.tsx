@@ -60,13 +60,20 @@ export function AnnotationOverlay({
       const iframeRect = iframeElement.getBoundingClientRect();
       const elementRect = targetElement.getBoundingClientRect();
 
+      // Calculate scale factor - the iframe content may be scaled by rrweb player
+      // Compare the iframe's visual size to its internal document size
+      const iframeInternalWidth = iframeElement.contentWindow?.innerWidth || iframeDoc.documentElement.scrollWidth;
+      const iframeInternalHeight = iframeElement.contentWindow?.innerHeight || iframeDoc.documentElement.scrollHeight;
+      const scaleX = iframeRect.width / iframeInternalWidth;
+      const scaleY = iframeRect.height / iframeInternalHeight;
+
       const phantom = document.createElement('div');
       phantom.style.cssText = `
         position: fixed;
-        left: ${iframeRect.left + elementRect.left}px;
-        top: ${iframeRect.top + elementRect.top}px;
-        width: ${elementRect.width}px;
-        height: ${elementRect.height}px;
+        left: ${iframeRect.left + elementRect.left * scaleX}px;
+        top: ${iframeRect.top + elementRect.top * scaleY}px;
+        width: ${elementRect.width * scaleX}px;
+        height: ${elementRect.height * scaleY}px;
         pointer-events: none;
         z-index: -1;
       `;

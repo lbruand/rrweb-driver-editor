@@ -157,6 +157,42 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
 
     containerRef.current.innerHTML = '';
 
+    // Set up MutationObserver to catch iframe creation and modify sandbox before content loads
+    let capturedIframe: HTMLIFrameElement | null = null;
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node instanceof HTMLIFrameElement) {
+            // Immediately modify sandbox attribute before content loads
+            const currentSandbox = node.getAttribute('sandbox') || '';
+            if (!currentSandbox.includes('allow-scripts')) {
+              node.setAttribute(
+                'sandbox',
+                currentSandbox ? `${currentSandbox} allow-scripts` : 'allow-same-origin allow-scripts'
+              );
+            }
+            capturedIframe = node;
+          }
+          // Also check children if a container was added
+          if (node instanceof HTMLElement) {
+            const iframe = node.querySelector('iframe');
+            if (iframe && !capturedIframe) {
+              const currentSandbox = iframe.getAttribute('sandbox') || '';
+              if (!currentSandbox.includes('allow-scripts')) {
+                iframe.setAttribute(
+                  'sandbox',
+                  currentSandbox ? `${currentSandbox} allow-scripts` : 'allow-same-origin allow-scripts'
+                );
+              }
+              capturedIframe = iframe;
+            }
+          }
+        }
+      }
+    });
+
+    observer.observe(containerRef.current, { childList: true, subtree: true });
+
     playerRef.current = new rrwebPlayer({
       target: containerRef.current,
       props: {
@@ -169,18 +205,14 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
       },
     });
 
-    // Get iframe element for driver.js
+    // Stop observing after player is created
+    observer.disconnect();
+
+    // Get iframe element for driver.js (use captured or get from replayer)
     const replayer = playerRef.current.getReplayer?.();
-    if (replayer?.iframe) {
-      // Add allow-scripts to sandbox to enable script execution in the replay iframe
-      const currentSandbox = replayer.iframe.getAttribute('sandbox') || '';
-      if (!currentSandbox.includes('allow-scripts')) {
-        replayer.iframe.setAttribute(
-          'sandbox',
-          currentSandbox ? `${currentSandbox} allow-scripts` : 'allow-same-origin allow-scripts'
-        );
-      }
-      setIframeElement(replayer.iframe);
+    const iframe = capturedIframe || replayer?.iframe;
+    if (iframe) {
+      setIframeElement(iframe);
     }
 
     // Get total duration
