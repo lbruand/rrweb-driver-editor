@@ -120,6 +120,14 @@
   pointer-events: none;
   z-index: 1001;
   overflow: visible;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.annotation-markers.visible {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .annotation-marker {

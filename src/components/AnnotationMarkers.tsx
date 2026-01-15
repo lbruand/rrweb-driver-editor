@@ -14,13 +14,17 @@ interface AnnotationMarkersProps {
   showControls: boolean;
 }
 
+// Cache bounds between renders so we can show markers immediately
+let cachedBounds: ProgressBarBounds | null = null;
+
 export function AnnotationMarkers({
   annotations,
   totalDuration,
   onMarkerClick,
   showControls,
 }: AnnotationMarkersProps) {
-  const [progressBarBounds, setProgressBarBounds] = useState<ProgressBarBounds | null>(null);
+  const [progressBarBounds, setProgressBarBounds] = useState<ProgressBarBounds | null>(cachedBounds);
+  const [isVisible, setIsVisible] = useState(false);
 
   const updateProgressBarBounds = useCallback(() => {
     // Find the progress bar element in rrweb player
@@ -29,45 +33,37 @@ export function AnnotationMarkers({
       const rect = progressBar.getBoundingClientRect();
       // Only update if we get valid bounds (element is visible)
       if (rect.width > 0) {
-        // Position at the vertical center of the progress bar
-        setProgressBarBounds({
+        const bounds = {
           left: rect.left,
           width: rect.width,
           top: rect.top + rect.height / 2,
-        });
+        };
+        cachedBounds = bounds;
+        setProgressBarBounds(bounds);
       }
     }
   }, []);
 
   useEffect(() => {
-    // Update bounds when controls visibility changes
     if (showControls) {
-      // Small delay to let the animation complete (300ms animation + buffer)
-      const timer = setTimeout(updateProgressBarBounds, 350);
-      return () => clearTimeout(timer);
+      // Update bounds immediately
+      updateProgressBarBounds();
+      // Delay visibility to allow initial render in hidden state, then animate in
+      const visibilityTimer = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsVisible(true);
+        });
+      });
+      // Also update bounds after animation completes
+      const boundsTimer = setTimeout(updateProgressBarBounds, 350);
+      return () => {
+        cancelAnimationFrame(visibilityTimer);
+        clearTimeout(boundsTimer);
+      };
+    } else {
+      setIsVisible(false);
     }
   }, [showControls, updateProgressBarBounds]);
-
-  // Also try to update immediately if we don't have bounds yet
-  useEffect(() => {
-    if (showControls && !progressBarBounds) {
-      const interval = setInterval(() => {
-        const progressBar = document.querySelector('.rr-progress');
-        if (progressBar) {
-          const rect = progressBar.getBoundingClientRect();
-          if (rect.width > 0) {
-            setProgressBarBounds({
-              left: rect.left,
-              width: rect.width,
-              top: rect.top + rect.height / 2,
-            });
-            clearInterval(interval);
-          }
-        }
-      }, 50);
-      return () => clearInterval(interval);
-    }
-  }, [showControls, progressBarBounds]);
 
   useEffect(() => {
     // Update on resize
@@ -75,19 +71,30 @@ export function AnnotationMarkers({
     return () => window.removeEventListener('resize', updateProgressBarBounds);
   }, [updateProgressBarBounds]);
 
-  // Only show markers when controls are visible and we have valid bounds
-  if (totalDuration <= 0 || annotations.length === 0 || !showControls || !progressBarBounds) {
+  // Don't render if no annotations or duration
+  if (totalDuration <= 0 || annotations.length === 0) {
     return null;
   }
 
+  // Use cached bounds for positioning
+  const bounds = progressBarBounds || cachedBounds;
+
   return (
     <div
-      className="annotation-markers"
-      style={{
-        left: progressBarBounds.left,
-        width: progressBarBounds.width,
-        top: progressBarBounds.top,
-      }}
+      className={`annotation-markers ${isVisible ? 'visible' : ''}`}
+      style={
+        bounds
+          ? {
+              left: bounds.left,
+              width: bounds.width,
+              top: bounds.top,
+            }
+          : {
+              left: '10%',
+              right: '10%',
+              bottom: 40,
+            }
+      }
     >
       {annotations.map((annotation) => {
         const percentage = (annotation.timestamp / totalDuration) * 100;
