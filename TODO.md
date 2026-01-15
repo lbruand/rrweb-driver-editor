@@ -35,7 +35,7 @@ driverObj.highlight({
  * [x] cleanup the log for the annotations parsing
  * [x] can we reduce the ANNOTATION_THRESHOLD_MS
  * [x] find a better name (rehearseur)
- * [ ] add some key shortcuts
+ * [x] add some key shortcuts
        right arrow : skip to the next bookmark and pause
        left arrow : Go back to the previous bookmark and pause.
        space : play/pause

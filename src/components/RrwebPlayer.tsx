@@ -83,6 +83,13 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
     });
   }, [recordingDimensions]);
 
+  const goToAnnotation = useCallback((annotation: Annotation) => {
+    if (playerRef.current) {
+      playerRef.current.goto(annotation.timestamp);
+      triggeredAnnotationsRef.current.clear();
+    }
+  }, []);
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const distanceFromBottom = window.innerHeight - e.clientY;
@@ -100,6 +107,66 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [calculateSize]);
+
+  // Keyboard shortcuts for navigation and playback
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle keyboard shortcuts if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      if (!playerRef.current) return;
+
+      switch (e.key) {
+        case 'ArrowRight': {
+          // Skip to next bookmark and pause
+          e.preventDefault();
+          const nextAnnotation = annotations.find(
+            (annotation) => annotation.timestamp > currentTime
+          );
+          if (nextAnnotation) {
+            goToAnnotation(nextAnnotation);
+            playerRef.current.pause();
+          }
+          break;
+        }
+        case 'ArrowLeft': {
+          // Go back to previous bookmark and pause
+          e.preventDefault();
+          // Find annotations before current time, get the last one
+          const previousAnnotations = annotations.filter(
+            (annotation) => annotation.timestamp < currentTime - ANNOTATION_THRESHOLD_MS
+          );
+          const previousAnnotation = previousAnnotations[previousAnnotations.length - 1];
+          if (previousAnnotation) {
+            goToAnnotation(previousAnnotation);
+            playerRef.current.pause();
+          }
+          break;
+        }
+        case ' ': {
+          // Play/pause toggle
+          e.preventDefault();
+          const replayer = playerRef.current.getReplayer?.();
+          if (replayer) {
+            // Check if currently playing by examining the internal state
+            // The rrweb player doesn't expose a direct isPaused() method,
+            // so we'll call pause() which is idempotent, or we can track state
+            // For simplicity, we'll just use the controller's play/pause button behavior
+            const controller = containerRef.current?.querySelector('.rr-controller__btns button');
+            if (controller instanceof HTMLElement) {
+              controller.click();
+            }
+          }
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [annotations, currentTime, goToAnnotation]);
 
   // Check for annotation triggers
   const checkAnnotationTriggers = useCallback(
@@ -255,13 +322,6 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
     if (node) {
       (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
       setReady(true);
-    }
-  }, []);
-
-  const goToAnnotation = useCallback((annotation: Annotation) => {
-    if (playerRef.current) {
-      playerRef.current.goto(annotation.timestamp);
-      triggeredAnnotationsRef.current.clear();
     }
   }, []);
 
