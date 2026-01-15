@@ -32,6 +32,7 @@ driverObj.highlight({
 ```
  * [x] add some tests
  * [x] have a default for autopause to true 
+ * [ ] github actions : add some linting a builder, etc...
  * [ ] improve a lot the tests so the harness is harder
  * [ ] add some tests for the annotations parsing
  * [ ] find a better name
@@ -53,6 +54,4 @@ driverObj.highlight({
        so claude/cursor can modify the json stream directly. The creation of the annotation file should be easy in
        claude/cursor. It means we should be able to read the recording json easily.Maybe we could build a summary.
  * [ ] change the logo
- * [ ] add some linting a builder, github actions etc...
- * [ ] package the code into 
  
