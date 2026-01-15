@@ -33,12 +33,16 @@ driverObj.highlight({
  * [x] add some tests
  * [x] have a default for autopause to true 
  * [x] cleanup the log for the annotations parsing
+ * [x] can we reduce the ANNOTATION_THRESHOLD_MS
+ * [ ] the title of the application should reflect the title from the annotations
+ * [ ] add a timestamp display that you can copy/paste
+ * [ ] it would be great to support hashtags in the url to go directly on a bookmark
+       ( and modify the url according during replay)
  * [ ] add some key shortcuts
  * [ ] github actions : add some linting a builder, etc...
  * [ ] improve a lot the tests so the harness is harder
  * [ ] add some tests for the annotations parsing
  * [ ] find a better name
- * [ ] can we reduce the ANNOTATION_THRESHOLD_MS
  * [ ] We should make a video/annotations that makes more sense
  * [ ] We should have a video of the whole thing to demo in the readme
  * [ ] ask claude to suggest some refactorings.
