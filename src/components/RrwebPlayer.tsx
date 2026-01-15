@@ -97,6 +97,54 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
     }
   }, []);
 
+  // Navigate to bookmark from URL hash (on page load and when hash changes)
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (!playerRef.current || annotations.length === 0) return;
+
+      const hash = window.location.hash.slice(1); // Remove the '#'
+      if (!hash) return;
+
+      // Find annotation by ID
+      const annotation = annotations.find(a => a.id === hash);
+      if (annotation) {
+        setActiveAnnotation(null); // Dismiss any active overlay
+        goToAnnotation(annotation);
+      }
+    };
+
+    // Navigate on initial load if there's a hash
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [annotations, goToAnnotation]);
+
+  // Update URL hash based on current playback position
+  useEffect(() => {
+    if (annotations.length === 0) return;
+
+    // Find the active annotation (last annotation before or at current time)
+    let activeAnnotationId: string | null = null;
+    for (const annotation of annotations) {
+      if (annotation.timestamp <= currentTime) {
+        activeAnnotationId = annotation.id;
+      } else {
+        break;
+      }
+    }
+
+    // Update URL hash if changed
+    const currentHash = window.location.hash.slice(1);
+    if (activeAnnotationId && activeAnnotationId !== currentHash) {
+      window.history.replaceState(null, '', `#${activeAnnotationId}`);
+    } else if (!activeAnnotationId && currentHash) {
+      // Clear hash if before first annotation
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, [currentTime, annotations]);
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const distanceFromBottom = window.innerHeight - e.clientY;
