@@ -5,7 +5,7 @@
 
 export const CONFIG = {
   RECORDING: {
-    DEFAULT_URL: '/recording_jupyterlite.json',
+    DEFAULT_URL: 'recording_jupyterlite.json',
     ANNOTATIONS_SUFFIX: '.annotations.md',
   },
   PLAYER: {
