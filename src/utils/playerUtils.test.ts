@@ -90,7 +90,7 @@ describe('calculatePlayerSize', () => {
 
 describe('loadRecording', () => {
   beforeEach(() => {
-    global.fetch = vi.fn();
+    global.fetch = vi.fn() as unknown as typeof fetch;
   });
 
   afterEach(() => {
@@ -103,10 +103,10 @@ describe('loadRecording', () => {
       { type: 2, data: {} },
     ];
 
-    (global.fetch as any).mockResolvedValue({
+    vi.mocked(global.fetch).mockResolvedValue({
       ok: true,
       json: async () => mockEvents,
-    });
+    } as Response);
 
     const result = await loadRecording('http://example.com/recording.json');
 
@@ -120,10 +120,10 @@ describe('loadRecording', () => {
       { type: 2, data: {} },
     ];
 
-    (global.fetch as any).mockResolvedValue({
+    vi.mocked(global.fetch).mockResolvedValue({
       ok: true,
       json: async () => ({ events: mockEvents }),
-    });
+    } as Response);
 
     const result = await loadRecording('http://example.com/recording.json');
 
@@ -138,10 +138,10 @@ describe('loadRecording', () => {
       { type: 2, data: {} },
     ];
 
-    (global.fetch as any).mockResolvedValue({
+    vi.mocked(global.fetch).mockResolvedValue({
       ok: true,
       json: async () => mockEvents,
-    });
+    } as Response);
 
     const result = await loadRecording('http://example.com/recording.json');
 
@@ -154,10 +154,10 @@ describe('loadRecording', () => {
       { type: 2, data: {} },
     ];
 
-    (global.fetch as any).mockResolvedValue({
+    vi.mocked(global.fetch).mockResolvedValue({
       ok: true,
       json: async () => mockEvents,
-    });
+    } as Response);
 
     const result = await loadRecording('http://example.com/recording.json');
 
@@ -165,10 +165,10 @@ describe('loadRecording', () => {
   });
 
   it('should throw error on failed fetch', async () => {
-    (global.fetch as any).mockResolvedValue({
+    vi.mocked(global.fetch).mockResolvedValue({
       ok: false,
       statusText: 'Not Found',
-    });
+    } as Response);
 
     await expect(loadRecording('http://example.com/missing.json')).rejects.toThrow(
       'Failed to fetch recording: Not Found'
@@ -176,7 +176,7 @@ describe('loadRecording', () => {
   });
 
   it('should handle network errors', async () => {
-    (global.fetch as any).mockRejectedValue(new Error('Network error'));
+    vi.mocked(global.fetch).mockRejectedValue(new Error('Network error'));
 
     await expect(loadRecording('http://example.com/recording.json')).rejects.toThrow(
       'Network error'
@@ -187,12 +187,13 @@ describe('loadRecording', () => {
 describe('URL hash utilities', () => {
   beforeEach(() => {
     // Reset window location
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (window as any).location;
     window.location = {
       hash: '',
       pathname: '/test',
       href: 'http://localhost:5174/test',
-    } as any;
+    } as Location;
 
     // Mock history.replaceState
     window.history.replaceState = vi.fn();

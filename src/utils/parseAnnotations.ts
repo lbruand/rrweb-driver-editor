@@ -68,7 +68,7 @@ function extractDriverJsCode(content: string): string | undefined {
 }
 
 function extractDescription(content: string): string | undefined {
-  let text = content
+  const text = content
     .replace(/^---\n[\s\S]*?\n---\n?/, '')
     .replace(/```driverjs\n[\s\S]*?```\n?/, '')
     .trim();

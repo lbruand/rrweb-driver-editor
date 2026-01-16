@@ -47,8 +47,10 @@ export function AnnotationMarkers({
 
   useEffect(() => {
     if (showControls) {
-      // Update bounds immediately
-      updateProgressBarBounds();
+      // Defer bounds update to avoid synchronous setState in effect
+      const initialBoundsTimer = requestAnimationFrame(() => {
+        updateProgressBarBounds();
+      });
       // Delay visibility to allow initial render in hidden state, then animate in
       const visibilityTimer = requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -58,11 +60,15 @@ export function AnnotationMarkers({
       // Also update bounds after animation completes
       const boundsTimer = setTimeout(updateProgressBarBounds, 350);
       return () => {
+        cancelAnimationFrame(initialBoundsTimer);
         cancelAnimationFrame(visibilityTimer);
         clearTimeout(boundsTimer);
       };
     } else {
-      setIsVisible(false);
+      // Defer setState to avoid synchronous update in effect
+      requestAnimationFrame(() => {
+        setIsVisible(false);
+      });
     }
   }, [showControls, updateProgressBarBounds]);
 

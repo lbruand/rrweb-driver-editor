@@ -142,13 +142,19 @@ export function usePlayerInstance(recordingUrl: string): UsePlayerInstanceResult
     // Remove sandbox attribute - we trust the recording input
     if (iframe) {
       iframe.removeAttribute('sandbox');
-      setIframeElement(iframe);
+      // Defer setState to avoid synchronous update in effect
+      requestAnimationFrame(() => {
+        setIframeElement(iframe);
+      });
     }
 
     // Get total duration
     if (replayer?.getMetaData) {
       const meta = replayer.getMetaData();
-      setTotalDuration(meta.endTime - meta.startTime);
+      // Defer setState to avoid synchronous update in effect
+      requestAnimationFrame(() => {
+        setTotalDuration(meta.endTime - meta.startTime);
+      });
     }
   }, [ready, playerSize]);
 
