@@ -189,11 +189,12 @@ describe('URL hash utilities', () => {
     // Reset window location
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (window as any).location;
-    window.location = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).location = {
       hash: '',
       pathname: '/test',
       href: 'http://localhost:5174/test',
-    } as Location;
+    };
 
     // Mock history.replaceState
     window.history.replaceState = vi.fn();
