@@ -131,6 +131,13 @@
   pointer-events: auto !important;
 }
 
+/* Override driver.js pointer-events:none for table of contents */
+.toc-toggle,
+.toc-panel,
+.toc-panel * {
+  pointer-events: auto !important;
+}
+
 /* Ensure play button is clickable */
 .rr-controller .rr-play-pause-btn {
   position: relative;
@@ -265,10 +272,11 @@
   color: white;
   padding: 16px 8px;
   cursor: pointer;
-  z-index: 1003;
+  z-index: 1000000003;
   border-radius: 4px 0 0 4px;
   font-size: 16px;
   transition: background 0.2s ease, right 0.3s ease;
+  pointer-events: auto;
 }
 
 .toc-toggle:hover {
@@ -285,11 +293,12 @@
   backdrop-filter: blur(10px);
   transform: translateX(100%);
   transition: transform 0.3s ease;
-  z-index: 1002;
+  z-index: 1000000003;
   display: flex;
   flex-direction: column;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   color: #fff;
+  pointer-events: auto;
 }
 
 .toc-panel.open {

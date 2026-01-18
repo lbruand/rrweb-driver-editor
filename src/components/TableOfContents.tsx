@@ -28,7 +28,10 @@ function SectionItem({ section, activeId, onAnnotationClick }: SectionItemProps)
     <div className="toc-section">
       <div
         className={`toc-section-header ${hasActiveAnnotation ? 'has-active' : ''}`}
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsExpanded(!isExpanded);
+        }}
       >
         <span className="toc-section-toggle">{isExpanded ? '\u25BC' : '\u25B6'}</span>
         <span className="toc-section-title">{section.title}</span>
@@ -39,7 +42,10 @@ function SectionItem({ section, activeId, onAnnotationClick }: SectionItemProps)
             <div
               key={annotation.id}
               className={`toc-item ${annotation.id === activeId ? 'active' : ''}`}
-              onClick={() => onAnnotationClick(annotation)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAnnotationClick(annotation);
+              }}
             >
               <div
                 className="toc-item-marker"
@@ -87,7 +93,7 @@ export function TableOfContents({
           ))}
         </div>
       </div>
-      <button className="toc-toggle" onClick={onToggle} title="Table of Contents">
+      <button className="toc-toggle" onClick={(e) => { e.stopPropagation(); onToggle(); }} title="Table of Contents">
         {isOpen ? '\u203A' : '\u2039'}
       </button>
     </>
