@@ -51,11 +51,18 @@ export function useUrlHashNavigation({
     };
 
     // Navigate on initial load if there's a hash
-    handleHashNavigation(true);
+    // Use requestAnimationFrame to ensure player is fully initialized
+    // (the replayer needs an extra frame after iframe is available)
+    const frameId = requestAnimationFrame(() => {
+      handleHashNavigation(true);
+    });
 
     // Listen for hash changes (user clicking links, browser back/forward)
     const onHashChange = () => handleHashNavigation(false);
     window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener('hashchange', onHashChange);
+    };
   }, [annotations, iframeElement]);
 }
