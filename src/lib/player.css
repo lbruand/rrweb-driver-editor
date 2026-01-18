@@ -1,0 +1,200 @@
+/* Minimal rrweb player styles - extracted from rrweb-player */
+
+.replayer-wrapper {
+  position: relative;
+}
+
+.replayer-mouse {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  transition: left 0.05s linear, top 0.05s linear;
+  background-size: contain;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjMwMCIgd2lkdGg9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBkYXRhLW5hbWU9IkxheWVyIDEiIHZpZXdCb3g9IjAgMCA1MCA1MCI+PHBhdGggZD0iTTQ4LjcxIDQyLjkxTDM0LjA4IDI4LjI5IDQ0LjMzIDE4YTEgMSAwIDAwLS4zMy0xLjYxTDIuMzUgMS4wNmExIDEgMCAwMC0xLjI5IDEuMjlMMTYuMzkgNDRhMSAxIDAgMDAxLjY1LjM2bDEwLjI1LTEwLjI4IDE0LjYyIDE0LjYzYTEgMSAwIDAwMS40MSAwbDQuMzgtNC4zOGExIDEgMCAwMC4wMS0xLjQyem0tNS4wOSAzLjY3TDI5IDMyYTEgMSAwIDAwLTEuNDEgMGwtOS44NSA5Ljg1TDMuNjkgMy42OWwzOC4xMiAxNEwzMiAyNy41OEExIDEgMCAwMDMyIDI5bDE0LjU5IDE0LjYyeiIvPjwvc3ZnPg==");
+  border-color: transparent;
+}
+
+.replayer-mouse:after {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: #4950f6;
+  border-radius: 100%;
+  transform: translate(-50%, -50%);
+  opacity: 0.3;
+}
+
+.replayer-mouse.active:after {
+  animation: click 0.2s ease-in-out 1;
+}
+
+.replayer-mouse.touch-device {
+  background-image: none;
+  width: 70px;
+  height: 70px;
+  border-radius: 100%;
+  margin-left: -37px;
+  margin-top: -37px;
+  border: 4px solid rgba(73, 80, 246, 0);
+  transition: left 0s linear, top 0s linear, border-color 0.2s ease-in-out;
+}
+
+.replayer-mouse.touch-device.touch-active {
+  border-color: #4950f6;
+  transition: left 0.25s linear, top 0.25s linear, border-color 0.2s ease-in-out;
+}
+
+.replayer-mouse.touch-device:after {
+  opacity: 0;
+}
+
+.replayer-mouse.touch-device.active:after {
+  animation: touch-click 0.2s ease-in-out 1;
+}
+
+.replayer-mouse-tail {
+  position: absolute;
+  pointer-events: none;
+}
+
+@keyframes click {
+  0% {
+    opacity: 0.3;
+    width: 20px;
+    height: 20px;
+  }
+  50% {
+    opacity: 0.5;
+    width: 10px;
+    height: 10px;
+  }
+}
+
+@keyframes touch-click {
+  0% {
+    opacity: 0;
+    width: 20px;
+    height: 20px;
+  }
+  50% {
+    opacity: 0.5;
+    width: 10px;
+    height: 10px;
+  }
+}
+
+.rr-player {
+  position: relative;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 24px 48px rgba(17, 16, 62, 0.12);
+}
+
+.rr-player__frame {
+  overflow: hidden;
+}
+
+.replayer-wrapper {
+  transform-origin: top left;
+}
+
+.replayer-wrapper > iframe {
+  border: none;
+}
+
+.rr-controller {
+  width: 100%;
+  height: 80px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 0 0 5px 5px;
+}
+
+.rr-timeline {
+  width: 80%;
+  display: flex;
+  align-items: center;
+}
+
+.rr-timeline__time {
+  display: inline-block;
+  width: 100px;
+  text-align: center;
+  color: #11103e;
+}
+
+.rr-progress {
+  flex: 1;
+  height: 12px;
+  background: #eee;
+  position: relative;
+  border-radius: 3px;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-top: solid 4px #fff;
+  border-bottom: solid 4px #fff;
+}
+
+.rr-progress.disabled {
+  cursor: not-allowed;
+}
+
+.rr-progress__step {
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #e0e1fe;
+}
+
+.rr-progress__handler {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  position: absolute;
+  top: 2px;
+  transform: translate(-50%, -50%);
+  background: rgb(73, 80, 246);
+}
+
+.rr-controller__btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+.rr-controller__btns button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.rr-controller__btns button:active {
+  background: #e0e1fe;
+}
+
+.rr-controller__btns button.active {
+  color: #fff;
+  background: rgb(73, 80, 246);
+}
+
+.rr-controller__btns button:disabled {
+  cursor: not-allowed;
+}

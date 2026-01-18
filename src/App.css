@@ -106,22 +106,37 @@
   position: relative;
 }
 
-/* Hide the default controller inside the player */
-.player-container .rr-controller {
+/* Hide the default controller by default */
+.rr-controller {
   display: none !important;
 }
 
 /* Fixed controller at bottom of viewport - dark and transparent */
-.player-container.show-controls .rr-controller {
+.rr-controller.visible {
   display: flex !important;
   position: fixed !important;
   bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
-  z-index: 1000;
+  z-index: 1000000001;
   animation: slideIn 0.3s ease-in-out;
   background: rgba(0, 0, 0, 0.5) !important;
   backdrop-filter: blur(3px);
+  pointer-events: auto !important;
+}
+
+/* Override driver.js pointer-events:none for controller */
+.rr-controller.visible,
+.rr-controller.visible * {
+  pointer-events: auto !important;
+}
+
+/* Ensure play button is clickable */
+.rr-controller .rr-play-pause-btn {
+  position: relative;
+  z-index: 1;
+  cursor: pointer !important;
+  pointer-events: auto !important;
 }
 
 @keyframes slideIn {
@@ -134,20 +149,20 @@
 }
 
 /* Make speed buttons visible - light on dark */
-.player-container .rr-controller button,
+.rr-controller button,
 .rr-controller__btns button {
   color: rgba(255, 255, 255, 0.7) !important;
   background: transparent !important;
 }
 
-.player-container .rr-controller button:hover,
+.rr-controller button:hover,
 .rr-controller__btns button:hover {
   color: rgba(255, 255, 255, 0.9) !important;
   background: rgba(255, 255, 255, 0.1) !important;
 }
 
-.player-container .rr-controller button.active,
-.player-container .rr-controller button[disabled],
+.rr-controller button.active,
+.rr-controller button[disabled],
 .rr-controller__btns button.active {
   color: #fff !important;
   background: rgba(255, 255, 255, 0.2) !important;
@@ -155,27 +170,27 @@
 }
 
 /* Ensure all controller text is visible */
-.player-container .rr-controller span,
-.player-container .rr-controller div {
+.rr-controller span,
+.rr-controller div {
   color: #fff !important;
 }
 
 /* Progress bar styling - black with gray border */
-.player-container .rr-controller .rr-progress,
-.player-container .rr-controller .rr-progress__step,
-.player-container .rr-controller input[type="range"] {
+.rr-controller .rr-progress,
+.rr-controller .rr-progress__step,
+.rr-controller input[type="range"] {
   background: #000 !important;
   border-color: #666 !important;
 }
 
-.player-container .rr-controller .rr-progress__handler,
-.player-container .rr-controller input[type="range"]::-webkit-slider-thumb {
+.rr-controller .rr-progress__handler,
+.rr-controller input[type="range"]::-webkit-slider-thumb {
   background: #000 !important;
   border-color: #666 !important;
 }
 
-.player-container .rr-controller .rr-timeline,
-.player-container .rr-controller .rr-progress-wrapper {
+.rr-controller .rr-timeline,
+.rr-controller .rr-progress-wrapper {
   border-color: #666 !important;
 }
 
@@ -184,7 +199,7 @@
   position: fixed;
   height: 0;
   pointer-events: none;
-  z-index: 1001;
+  z-index: 1000000002;
   overflow: visible;
   transform: translateY(100px);
   opacity: 0;

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import rrwebPlayer from 'rrweb-player';
-import 'rrweb-player/dist/style.css';
+import MinimalPlayer from '../lib/MinimalPlayer';
+import '../lib/player.css';
 import type { PlayerInstance, RecordingDimensions } from '../types/player';
 import { loadRecording, calculatePlayerSize } from '../utils/playerUtils';
 import { CONFIG } from '../constants/config';
@@ -119,7 +119,7 @@ export function usePlayerInstance(recordingUrl: string): UsePlayerInstanceResult
 
     containerRef.current.innerHTML = '';
 
-    playerRef.current = new rrwebPlayer({
+    playerRef.current = new MinimalPlayer({
       target: containerRef.current,
       props: {
         // @ts-expect-error events type mismatch between unknown[] and eventWithTime[]
@@ -167,6 +167,17 @@ export function usePlayerInstance(recordingUrl: string): UsePlayerInstanceResult
       return () => observer.disconnect();
     }
   }, [containerCallbackRef]);
+
+  // Sync controller visibility with showControls state
+  useEffect(() => {
+    if (playerRef.current) {
+      if (showControls) {
+        playerRef.current.showController();
+      } else {
+        playerRef.current.hideController();
+      }
+    }
+  }, [showControls]);
 
   return {
     playerRef,

@@ -1,4 +1,4 @@
-import type rrwebPlayer from 'rrweb-player';
+import type { Replayer } from 'rrweb';
 import { CONFIG } from '../constants/config';
 
 export interface RecordingDimensions {
@@ -6,17 +6,15 @@ export interface RecordingDimensions {
   height: number;
 }
 
-export type PlayerInstance = rrwebPlayer & {
+export interface PlayerInstance {
+  pause: () => void;
+  play: () => void;
+  goto: (timeOffset: number, play?: boolean) => void;
+  getReplayer: () => Replayer;
+  showController: () => void;
+  hideController: () => void;
   $destroy?: () => void;
-  goto?: (timeOffset: number, play?: boolean) => void;
-  getReplayer?: () => {
-    iframe?: HTMLIFrameElement;
-    getMetaData?: () => { startTime: number; endTime: number };
-    getCurrentTime?: () => number;
-    on?: (event: string, handler: (...args: unknown[]) => void) => void;
-    off?: (event: string, handler: (...args: unknown[]) => void) => void;
-  };
-};
+}
 
 // Re-export constants from CONFIG for backward compatibility
 export const MIN_DISPLAY_WIDTH = CONFIG.PLAYER.DISPLAY_MIN_WIDTH;

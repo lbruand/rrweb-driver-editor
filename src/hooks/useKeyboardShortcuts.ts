@@ -65,16 +65,10 @@ export function useKeyboardShortcuts({
           // Play/pause toggle
           e.preventDefault();
           setActiveAnnotation(null); // Dismiss any active overlay
-          const replayer = playerRef.current.getReplayer?.();
-          if (replayer) {
-            // Check if currently playing by examining the internal state
-            // The rrweb player doesn't expose a direct isPaused() method,
-            // so we'll call pause() which is idempotent, or we can track state
-            // For simplicity, we'll just use the controller's play/pause button behavior
-            const controller = containerRef.current?.querySelector(DOM_SELECTORS.RR_CONTROLLER_BTN);
-            if (controller instanceof HTMLElement) {
-              controller.click();
-            }
+          // Find controller button in document.body (controller is appended there)
+          const controller = document.querySelector(DOM_SELECTORS.RR_CONTROLLER_BTN);
+          if (controller instanceof HTMLElement) {
+            controller.click();
           }
           break;
         }
