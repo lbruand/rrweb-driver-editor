@@ -39,8 +39,14 @@ export function useUrlHashNavigation({
           }
         }
 
-        setActiveAnnotation(null); // Dismiss any active overlay
         goToAnnotation(annotation);
+
+        // Show overlay if annotation has driver.js code
+        if (annotation.driverJsCode) {
+          setActiveAnnotation(annotation);
+        } else {
+          setActiveAnnotation(null);
+        }
       }
     };
 

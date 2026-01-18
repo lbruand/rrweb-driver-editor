@@ -61,10 +61,16 @@ export function RrwebPlayer({ recordingUrl, annotationsUrl }: RrwebPlayerProps) 
     setActiveAnnotation,
   });
 
-  // Clear triggered annotations when navigating
+  // Navigate to annotation and update overlay state
   const goToAnnotationWithClear = useCallback((annotation: Annotation) => {
     triggeredAnnotationsRef.current.clear();
     goToAnnotation(annotation);
+    // Show overlay if annotation has driver.js code, hide otherwise
+    if (annotation.driverJsCode) {
+      setActiveAnnotation(annotation);
+    } else {
+      setActiveAnnotation(null);
+    }
   }, [goToAnnotation, triggeredAnnotationsRef]);
 
   // Handle URL hash navigation
