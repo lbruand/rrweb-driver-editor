@@ -2,10 +2,17 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Annotation } from '../types/annotations';
 import type { PlayerInstance } from '../types/player';
 import type { NavigateToAnnotationOptions } from '../types/navigation';
-import { ANNOTATION_THRESHOLD_MS } from '../types/player';
-import { DEFAULT_AUTOPAUSE } from '../constants/annotations';
 import { updateUrlHash } from '../utils/playerUtils';
 import { CONFIG } from '../constants/config';
+import {
+  getTriggeredAnnotationsAfterNavigation,
+  shouldUpdateHash,
+  shouldPauseAfterNavigation,
+  shouldShowOverlay,
+  isBackwardSeek,
+  findAnnotationToTrigger,
+  getAnnotationsToUntriggerAfterSeek,
+} from '../utils/navigationUtils';
 
 export interface UseNavigationProps {
   playerRef: React.RefObject<PlayerInstance | null>;
@@ -49,44 +56,25 @@ export function useNavigation({
    *
    * | Source       | Shows Overlay | Triggered Set       | Updates Hash | Pauses        |
    * |--------------|--------------|---------------------|--------------|---------------|
-   * | keyboard     | If driverJs  | Clear all           | Yes          | Yes           |
+   * | keyboard     | If driverJs  | Clear all + add     | Yes          | Yes           |
    * | hash         | If driverJs  | Mark earlier        | No           | No            |
    * | playback     | If driverJs  | Add one             | Yes          | If autopause  |
-   * | toc          | If driverJs  | Clear all           | Yes          | No            |
-   * | marker       | If driverJs  | Clear all           | Yes          | No            |
-   * | progressBar  | Clear        | Clear after time    | No           | Yes           |
+   * | toc          | If driverJs  | Clear all + add     | Yes          | No            |
+   * | marker       | If driverJs  | Clear all + add     | Yes          | No            |
+   * | progressBar  | Clear        | No change           | No           | Yes           |
    */
   const navigateToAnnotation = useCallback(
-    ({ annotation, source, shouldPause }: NavigateToAnnotationOptions) => {
+    ({ annotation, source, shouldPause: explicitShouldPause }: NavigateToAnnotationOptions) => {
       if (!playerRef.current) return;
 
-      // Handle triggered annotations based on source
-      switch (source) {
-        case 'keyboard':
-        case 'toc':
-        case 'marker':
-          // Clear all triggered annotations, then mark current one as triggered
-          // so it doesn't re-trigger when playback resumes
-          triggeredAnnotationsRef.current.clear();
-          triggeredAnnotationsRef.current.add(annotation.id);
-          break;
-        case 'hash':
-          // Mark all annotations at or before target timestamp as triggered
-          // This prevents earlier annotations from firing and overwriting the hash
-          for (const a of annotations) {
-            if (a.timestamp <= annotation.timestamp) {
-              triggeredAnnotationsRef.current.add(a.id);
-            }
-          }
-          break;
-        case 'playback':
-          // Just add this annotation
-          triggeredAnnotationsRef.current.add(annotation.id);
-          break;
-        case 'progressBar':
-          // Clear annotations that are after the seek time (handled in handleSeek)
-          break;
-      }
+      // Update triggered annotations based on source
+      const newTriggered = getTriggeredAnnotationsAfterNavigation(
+        source,
+        annotation,
+        annotations,
+        triggeredAnnotationsRef.current
+      );
+      triggeredAnnotationsRef.current = newTriggered;
 
       // Navigate player to timestamp
       playerRef.current.goto(annotation.timestamp);
@@ -95,25 +83,19 @@ export function useNavigation({
       lastTimeRef.current = annotation.timestamp;
 
       // Update URL hash based on source
-      if (source === 'keyboard' || source === 'toc' || source === 'marker' || source === 'playback') {
+      if (shouldUpdateHash(source)) {
         updateUrlHash(annotation.id);
       }
 
       // Show/hide overlay based on source and driverJsCode
-      if (source === 'progressBar') {
-        // Progress bar always clears overlay
-        setActiveAnnotation(null);
-      } else if (annotation.driverJsCode) {
+      if (shouldShowOverlay(source, annotation)) {
         setActiveAnnotation(annotation);
       } else {
         setActiveAnnotation(null);
       }
 
       // Handle pause based on source
-      if (source === 'keyboard' || shouldPause) {
-        playerRef.current.pause();
-        setIsPlaying(false);
-      } else if (source === 'playback' && (annotation.autopause ?? DEFAULT_AUTOPAUSE)) {
+      if (shouldPauseAfterNavigation(source, annotation, explicitShouldPause)) {
         playerRef.current.pause();
         setIsPlaying(false);
       }
@@ -132,10 +114,9 @@ export function useNavigation({
       setActiveAnnotation(null);
 
       // Clear triggered annotations that are after the seek time
-      for (const annotation of annotations) {
-        if (annotation.timestamp > time) {
-          triggeredAnnotationsRef.current.delete(annotation.id);
-        }
+      const toUntrigger = getAnnotationsToUntriggerAfterSeek(annotations, time);
+      for (const id of toUntrigger) {
+        triggeredAnnotationsRef.current.delete(id);
       }
     },
     [annotations, playerRef, setActiveAnnotation]
@@ -199,27 +180,24 @@ export function useNavigation({
       }
 
       // Detect seeking backward - reset triggered annotations
-      if (time < lastTimeRef.current - CONFIG.ANNOTATIONS.SEEKING_BACKWARD_THRESHOLD_MS) {
+      if (isBackwardSeek(time, lastTimeRef.current)) {
         triggeredAnnotationsRef.current.clear();
       }
       lastTimeRef.current = time;
 
-      for (const annotation of annotations) {
-        // Skip if this annotation is already showing
-        if (activeAnnotation?.id === annotation.id) {
-          continue;
-        }
+      // Find and trigger annotation if any
+      const annotationToTrigger = findAnnotationToTrigger(
+        annotations,
+        time,
+        triggeredAnnotationsRef.current,
+        activeAnnotation?.id ?? null
+      );
 
-        const timeDiff = Math.abs(time - annotation.timestamp);
-        if (
-          timeDiff < ANNOTATION_THRESHOLD_MS &&
-          !triggeredAnnotationsRef.current.has(annotation.id)
-        ) {
-          navigateToAnnotation({
-            annotation,
-            source: 'playback',
-          });
-        }
+      if (annotationToTrigger) {
+        navigateToAnnotation({
+          annotation: annotationToTrigger,
+          source: 'playback',
+        });
       }
     },
     [annotations, navigateToAnnotation, playerRef, activeAnnotation]
