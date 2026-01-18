@@ -107,26 +107,23 @@
 
 .rr-controller {
   width: 100%;
-  height: 80px;
+  height: 50px;
   background: #fff;
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  flex-direction: row;
   align-items: center;
   border-radius: 0 0 5px 5px;
-}
-
-.rr-timeline {
-  width: 80%;
-  display: flex;
-  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  box-sizing: border-box;
 }
 
 .rr-timeline__time {
   display: inline-block;
-  width: 100px;
+  min-width: 90px;
   text-align: center;
   color: #11103e;
+  font-size: 13px;
 }
 
 .rr-progress {
@@ -163,17 +160,11 @@
   background: rgb(73, 80, 246);
 }
 
-.rr-controller__btns {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-}
-
-.rr-controller__btns button {
+.rr-play-pause-btn {
   width: 32px;
   height: 32px;
   display: flex;
+  flex-shrink: 0;
   padding: 0;
   align-items: center;
   justify-content: center;
@@ -186,15 +177,10 @@
   z-index: 1;
 }
 
-.rr-controller__btns button:active {
+.rr-play-pause-btn:active {
   background: #e0e1fe;
 }
 
-.rr-controller__btns button.active {
-  color: #fff;
-  background: rgb(73, 80, 246);
-}
-
-.rr-controller__btns button:disabled {
+.rr-play-pause-btn:disabled {
   cursor: not-allowed;
 }

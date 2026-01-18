@@ -114,14 +114,29 @@ export default class MinimalPlayer {
     this.controller = document.createElement('div');
     this.controller.className = 'rr-controller';
 
-    // Timeline container
-    const timeline = document.createElement('div');
-    timeline.className = 'rr-timeline';
+    // Play/Pause button (left of progress bar)
+    this.playButton = document.createElement('button');
+    this.playButton.type = 'button';
+    this.playButton.className = 'rr-play-pause-btn';
+    this.playButton.innerHTML = this.getPlayIcon();
 
-    // Time display
-    this.timeDisplay = document.createElement('span');
-    this.timeDisplay.className = 'rr-timeline__time';
-    this.timeDisplay.textContent = this.formatTime(0) + ' / ' + this.formatTime(this.totalTime);
+    // Use mouseup in capture phase - more reliable than click
+    const handlePlayPause = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      this.togglePlayPause();
+    };
+
+    this.playButton.addEventListener('mouseup', handlePlayPause, { capture: true });
+    this.playButton.addEventListener('touchend', handlePlayPause, { capture: true });
+    // Keep click for programmatic .click() calls (spacebar)
+    this.playButton.addEventListener('click', (e) => {
+      // Only handle if not already handled by mouseup
+      if (!e.isTrusted) {
+        handlePlayPause(e);
+      }
+    });
 
     // Progress bar
     const progress = document.createElement('div');
@@ -141,41 +156,15 @@ export default class MinimalPlayer {
     document.addEventListener('mousemove', this.handleProgressMouseMove.bind(this));
     document.addEventListener('mouseup', this.handleProgressMouseUp.bind(this));
 
-    timeline.appendChild(this.timeDisplay);
-    timeline.appendChild(progress);
+    // Time display (right side)
+    this.timeDisplay = document.createElement('span');
+    this.timeDisplay.className = 'rr-timeline__time';
+    this.timeDisplay.textContent = this.formatTime(0) + ' / ' + this.formatTime(this.totalTime);
 
-    // Buttons container
-    const btns = document.createElement('div');
-    btns.className = 'rr-controller__btns';
-
-    // Play/Pause button
-    this.playButton = document.createElement('button');
-    this.playButton.type = 'button';
-    this.playButton.className = 'rr-play-pause-btn';
-    this.playButton.innerHTML = this.getPlayIcon();
-
-    // Use mouseup in capture phase - more reliable than click
-    const handlePlayPause = (e: Event) => {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      this.togglePlayPause();
-    };
-
-    this.playButton.addEventListener('mouseup', handlePlayPause, { capture: true });
-    this.playButton.addEventListener('touchend', handlePlayPause, { capture: true });
-    // Keep click for programmatic .click() calls (spacebar)
-    this.playButton.addEventListener('click', (e) => {
-      // Only handle if not already handled by mouseup
-      if (e.isTrusted === false) {
-        handlePlayPause(e);
-      }
-    });
-
-    btns.appendChild(this.playButton);
-
-    this.controller.appendChild(timeline);
-    this.controller.appendChild(btns);
+    // Append in order: play button | progress bar | time display
+    this.controller.appendChild(this.playButton);
+    this.controller.appendChild(progress);
+    this.controller.appendChild(this.timeDisplay);
   }
 
   private handleProgressMouseDown(e: MouseEvent): void {
