@@ -1,4 +1,3 @@
-import { decode } from '@toon-format/toon';
 import type { RecordingDimensions } from '../types/player';
 import { MIN_DISPLAY_WIDTH, MIN_DISPLAY_HEIGHT } from '../types/player';
 
@@ -39,19 +38,7 @@ export async function loadRecording(url: string): Promise<LoadRecordingResult> {
     throw new Error(`Failed to fetch recording: ${response.statusText}`);
   }
 
-  let data;
-  if (url.endsWith('.toon')) {
-    const text = await response.text();
-    data = decode(text, { strict: false, indent: 2 });
-  } else if (url.endsWith('.gz')) {
-    const decompressedStream = response.body!.pipeThrough(
-      new DecompressionStream('gzip')
-    );
-    const decompressedResponse = new Response(decompressedStream);
-    data = await decompressedResponse.json();
-  } else {
-    data = await response.json();
-  }
+  const data = await response.json();
 
   // Handle both raw event arrays and wrapped {events: [...]} format
   const events = Array.isArray(data) ? data : (data as { events: unknown[] }).events;
