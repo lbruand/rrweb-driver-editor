@@ -24,6 +24,11 @@ A React application that replays [rrweb](https://github.com/rrweb-io/rrweb) reco
 
 ## Getting Started
 
+This project is a video/rrweb/annotation replayer.
+You want to create your own project [go to the template project](https://github.com/lbruand/rehearseur-template).
+
+## Contributing
+
 ### Install dependencies
 
 ```bash
