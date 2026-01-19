@@ -1,5 +1,9 @@
 # rehearseur
 
+![](doc/rehearseur_video.gif)
+
+[Check the demo](https://lbruand.github.io/rehearseur/)
+
 A mix between reprise and cursor :
 A React application that replays [rrweb](https://github.com/rrweb-io/rrweb) recordings.
 
