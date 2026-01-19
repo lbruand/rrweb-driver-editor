@@ -17,12 +17,13 @@
  * [x] github actions : add some linting a builder, etc...
  * [x] ask claude to suggest some refactorings.
  * [x] make the table of content refoldable
+ * [x] We should have a video of the whole thing to demo in the readme
+ * [x] be able to export a packed version in one single html file (possible ?) that you can run no server needed.
  * [ ] changing the size of the page, kills the current position
  * [ ] the top of the page is not shown on firefox
  * [ ] add a timestamp display that you can copy/paste
  * [ ] improve a lot the tests so the harness is harder
  * [ ] We should make a video/annotations that makes more sense
- * [ ] We should have a video of the whole thing to demo in the readme
  * [ ] when one clicks on drive.js annotation, the play should start again directly
  * [ ] annotations and bookmarks should be generated using genai. How will the model be able to read the json.
      we need to package the current project in two parts:
@@ -33,7 +34,6 @@
        adding a semantic database on top of the json/toon recording file etc...
        so claude/cursor can modify the json stream directly. The creation of the annotation file should be easy in
        claude/cursor. It means we should be able to read the recording json easily.Maybe we could build a summary.
- * [ ] be able to export a packed version in one single html file (possible ?) that you can run no server needed.
  * [ ] be able to export a pdf with a screenshot of each bookmark/section on a page.
  * [ ] to show or not a bookmark in the progressbar and in the table of content.
  
